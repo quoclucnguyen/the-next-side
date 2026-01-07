@@ -5,7 +5,6 @@ import BottomNavigation, {
   type BottomNavigationProps,
   type NavigationTab,
 } from "./BottomNavigation";
-import "./BottomNavigation.css";
 
 const meta: Meta<BottomNavigationProps> = {
   title: "Components/BottomNavigation",
@@ -32,11 +31,7 @@ const meta: Meta<BottomNavigationProps> = {
     },
     activeColor: {
       control: "color",
-      description: "Màu của tab active (chưa implement)",
-    },
-    inactiveColor: {
-      control: "color",
-      description: "Màu của tab inactive (chưa implement)",
+      description: "Màu của tab active",
     },
     height: {
       control: "number",
@@ -53,6 +48,27 @@ const meta: Meta<BottomNavigationProps> = {
     onTabChange: {
       action: "tabChanged",
       description: "Callback khi tab thay đổi",
+    },
+    maxWidth: {
+      control: "text",
+      description: "Max width của container (e.g., '768px', '1024px')",
+    },
+    borderTop: {
+      control: "text",
+      description: "Border top styling",
+    },
+    borderRadius: {
+      control: "text",
+      description: "Border radius cho corners",
+    },
+    boxShadow: {
+      control: "text",
+      description: "Box shadow styling",
+    },
+    position: {
+      control: "select",
+      options: ["fixed", "sticky", "relative"],
+      description: "Position type của navigation",
     },
   },
 };
@@ -333,6 +349,214 @@ export const Accessibility: Story = {
       description: {
         story:
           "BottomNavigation với đầy đủ accessibility features: ARIA labels, keyboard navigation support, và focus states.",
+      },
+    },
+  },
+};
+
+// Desktop View
+export const DesktopView: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    maxWidth: '1024px',
+    backgroundColor: '#FFFFFF',
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'desktop',
+    },
+    docs: {
+      description: {
+        story: "BottomNavigation với custom maxWidth cho desktop view, centered trên màn hình lớn.",
+      },
+    },
+  },
+};
+
+// Custom Width - 768px
+export const CustomWidth768: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    maxWidth: '768px',
+    backgroundColor: '#FFFFFF',
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'desktop',
+    },
+    docs: {
+      description: {
+        story: "BottomNavigation với maxWidth 768px, phù hợp cho tablet view.",
+      },
+    },
+  },
+};
+
+// Custom Width - 1200px
+export const CustomWidth1200: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    maxWidth: '1200px',
+    backgroundColor: '#FFFFFF',
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'desktop',
+    },
+    docs: {
+      description: {
+        story: "BottomNavigation với maxWidth 1200px, phù hợp cho desktop màn hình lớn.",
+      },
+    },
+  },
+};
+
+// Custom Styling
+export const CustomStyling: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    maxWidth: '1024px',
+    backgroundColor: '#FFFFFF',
+    borderTop: '2px solid #FF6B35',
+    borderRadius: '8px 8px 0 0',
+    boxShadow: '0 -4px 12px rgba(255, 107, 53, 0.2)',
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'desktop',
+    },
+    docs: {
+      description: {
+        story: "BottomNavigation với custom styling: border, border-radius, và box-shadow tùy chỉnh.",
+      },
+    },
+  },
+};
+
+// Dark Theme
+export const DarkTheme: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    maxWidth: '1024px',
+    backgroundColor: '#2D2D2D',
+    activeColor: '#FF6B35',
+    borderTop: '1px solid #404040',
+    boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.4)',
+  },
+  parameters: {
+    backgrounds: {
+      default: "dark",
+    },
+    viewport: {
+      defaultViewport: 'desktop',
+    },
+    docs: {
+      description: {
+        story: "BottomNavigation với dark theme styling cho desktop view.",
+      },
+    },
+  },
+};
+
+// Minimal Style
+export const Minimal: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    backgroundColor: '#FFFFFF',
+    borderTop: 'none',
+    boxShadow: 'none',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "BottomNavigation với minimal styling: không có border hay shadow.",
+      },
+    },
+  },
+};
+
+// With Badge Demo
+const WithBadgeWrapper: React.FC = () => {
+  return (
+    <MemoryRouter initialEntries={["/"]}>
+      <Routes>
+        <Route path="/" element={<MockContent title="Home Page" />} />
+        <Route path="/search" element={<MockContent title="Search Page" />} />
+        <Route
+          path="/add-product"
+          element={<MockContent title="Add Product Page" />}
+        />
+        <Route
+          path="/recipes"
+          element={<MockContent title="Recipes Page" />}
+        />
+        <Route
+          path="/profile"
+          element={<MockContent title="Profile Page" />}
+        />
+      </Routes>
+      <BottomNavigation
+        height={56}
+        showLabels={true}
+        safeArea={true}
+        backgroundColor="#FFFFFF"
+      />
+    </MemoryRouter>
+  );
+};
+
+export const WithBadge: Story = {
+  render: () => <WithBadgeWrapper />,
+  parameters: {
+    docs: {
+      description: {
+        story: "Demo của badge functionality (cần update trong component để hỗ trợ badge prop cho từng tab).",
+      },
+    },
+  },
+};
+
+// Rounded Top Corners
+export const RoundedTopCorners: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    maxWidth: '1024px',
+    backgroundColor: '#FFFFFF',
+    borderRadius: '16px 16px 0 0',
+    boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.1)',
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'desktop',
+    },
+    docs: {
+      description: {
+        story: "BottomNavigation với bo góc tròn ở phía trên cho giao diện hiện đại.",
+      },
+    },
+  },
+};
+
+// Sticky Position
+export const StickyPosition: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    position: 'sticky',
+    backgroundColor: '#FFFFFF',
+    boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.08)',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "BottomNavigation với sticky position thay vì fixed.",
       },
     },
   },

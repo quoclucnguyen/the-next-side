@@ -3,5 +3,4 @@ export type {
   NavigationTab,
   TabConfig,
   BottomNavigationProps,
-  BottomNavigationState,
 } from "./BottomNavigation";

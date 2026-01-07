@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { TabBar, Badge } from "antd-mobile";
+import { TabBar } from "antd-mobile";
 import {
   StarOutline,
   SearchOutline,
@@ -9,8 +9,6 @@ import {
   UserOutline,
 } from "antd-mobile-icons";
 import { cn } from "@/utils/cn";
-import type { TabBarItemProps } from "antd-mobile/es/components/tab-bar";
-import "./BottomNavigation.css";
 
 export type NavigationTab = "home" | "search" | "add" | "recipes" | "profile";
 
@@ -19,7 +17,7 @@ export interface TabConfig {
   label: string;
   icon: React.ReactNode;
   route: string;
-  badge?: number | React.ReactNode | typeof Badge.dot;
+  badge?: number | React.ReactNode | "dot";
   disabled?: boolean;
 }
 
@@ -28,17 +26,17 @@ export interface BottomNavigationProps {
   onTabChange?: (tab: NavigationTab) => void;
   backgroundColor?: string;
   activeColor?: string;
-  inactiveColor?: string;
   height?: number;
   showLabels?: boolean;
   safeArea?: boolean;
   className?: string;
-  style?: React.CSSProperties;
-}
-
-export interface BottomNavigationState {
-  activeTab: NavigationTab;
-  isAnimating: boolean;
+  
+  // Desktop & Layout props
+  maxWidth?: number | string;
+  borderTop?: string;
+  borderRadius?: string;
+  boxShadow?: string;
+  position?: 'fixed' | 'sticky' | 'relative';
 }
 
 // Default tab configuration
@@ -74,56 +72,21 @@ const useHapticFeedback = () => {
   return { triggerHaptic };
 };
 
-// Navigation Tab Item Component
-interface NavigationTabItemProps extends TabBarItemProps {
-  tab: TabConfig;
-  showLabels: boolean;
-}
-
-const NavigationTabItem: React.FC<NavigationTabItemProps> = ({
-  tab,
-  showLabels,
-  onClick,
-}) => {
-  return (
-    <TabBar.Item
-      key={tab.id}
-      icon={
-        tab.badge ? (
-          <Badge
-            content={tab.badge}
-            style={{ margin: 0, "--right": "4px", "--top": "4px" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {tab.icon}
-            </div>
-          </Badge>
-        ) : (
-          tab.icon
-        )
-      }
-      title={showLabels ? tab.label : undefined}
-      onClick={onClick}
-    />
-  );
-};
-
 // Main BottomNavigation Component
 const BottomNavigation: React.FC<BottomNavigationProps> = ({
   activeTab: controlledActiveTab,
   onTabChange,
   backgroundColor = "#FFFFFF",
+  activeColor = "#FF6B35",
   height = 56,
   showLabels = true,
   safeArea = true,
   className,
-  style,
+  maxWidth,
+  borderTop = '1px solid rgba(0, 0, 0, 0.1)',
+  borderRadius = '0',
+  boxShadow = '0 -2px 8px rgba(0, 0, 0, 0.08)',
+  position = 'fixed',
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -171,48 +134,63 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
     [navigate, onTabChange, triggerHaptic]
   );
 
-  // Memoize tabs with badges
-  const tabsWithBadges = useMemo(() => {
-    return defaultTabs.map((tab) => {
-      // Add badge counts based on tab type (this can be customized)
-      const badge = tab.badge;
-      return { ...tab, badge };
-    });
-  }, []);
+  // Build container classes based on maxWidth
+  const getContainerClasses = useCallback((): string => {
+    const classes: string[] = [position, 'left-0', 'right-0', 'bottom-0', 'z-50'];
+    
+    // Desktop centering logic
+    if (maxWidth) {
+      const maxWidthValue = typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth;
+      classes.push('md:left-1/2', 'md:-translate-x-1/2', 'md:w-full');
+      classes.push(`[max-width:${maxWidthValue}]`);
+    } else {
+      // Default behavior: max-w-md on desktop
+      classes.push('md:max-w-md', 'md:left-1/2', 'md:-translate-x-1/2');
+    }
+    
+    return classes.join(' ');
+  }, [maxWidth, position]);
 
   // Container styles
-  const containerStyle = useMemo(() => {
-    return {
-      height: `${height}px`,
-      backgroundColor,
-      ...style,
-    };
-  }, [height, backgroundColor, style]);
+  const containerStyle: React.CSSProperties = {
+    height: `${height}px`,
+    backgroundColor,
+    borderTop,
+    borderRadius,
+    boxShadow,
+  };
 
   return (
     <div
       className={cn(
-        "bottom-navigation",
-        "fixed bottom-0 left-0 right-0",
-        "z-50",
-        safeArea && "safe-area-bottom",
+        getContainerClasses(),
         className
       )}
       style={containerStyle}
-      role="navigation"
-      aria-label="Main navigation"
     >
       <TabBar
         activeKey={activeTab}
         onChange={handleTabChange}
         safeArea={safeArea}
-        className="bottom-navigation__tabbar"
+        className="h-full"
       >
-        {tabsWithBadges.map((tab) => (
-          <NavigationTabItem
+        {defaultTabs.map((tab) => (
+          <TabBar.Item
             key={tab.id}
-            tab={tab}
-            showLabels={showLabels}
+            icon={(active) => (
+              <div
+                style={{
+                  fontSize: "22px",
+                  color: active ? activeColor : "rgba(0, 0, 0, 0.5)",
+                  transition: "transform 0.2s",
+                  transform: active ? "scale(1.1)" : "scale(1)",
+                }}
+              >
+                {tab.icon}
+              </div>
+            )}
+            title={showLabels ? tab.label : undefined}
+            badge={tab.badge}
           />
         ))}
       </TabBar>

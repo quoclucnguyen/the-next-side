@@ -1,0 +1,85 @@
+/* Main Layout Container */
+.main-layout__container {
+  width: 100%;
+  position: relative;
+}
+
+/* Desktop-specific styling */
+@media (min-width: 768px) {
+  .main-layout__container {
+    max-width: 768px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    min-height: 100vh;
+    border-left: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+  }
+}
+
+/* Content Area */
+.main-layout__content-area {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for webkit browsers */
+.main-layout__content-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.main-layout__content-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-layout__content-area::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.main-layout__content-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Fixed header class */
+.main-layout__header--fixed {
+  position: sticky !important;
+  top: 0 !important;
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+}
+
+/* Content wrapper */
+.main-layout__content {
+  min-height: 100%;
+}
+
+/* Safe area handling for iOS devices */
+@supports (padding: max(0px)) {
+  .main-layout__content-area {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Loading state */
+.main-layout__container.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Transitions */
+.main-layout__container > * {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Print styles */
+@media print {
+  .main-layout__container {
+    box-shadow: none;
+    border: none;
+    max-width: 100%;
+  }
+  
+  .main-layout__content-area {
+    overflow: visible;
+    height: auto;
+  }
+}
